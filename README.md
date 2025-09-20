@@ -44,3 +44,9 @@ The project demonstrates **CRUD operations** on employees, menu-driven user inte
   - Static utility methods for menu options
 
 ---
+## Code in Action !
+<img width="677" height="718" alt="image" src="https://github.com/user-attachments/assets/982f83e8-4c97-44e5-97a5-952c55f9f159" /><img width="682" height="402" alt="image" src="https://github.com/user-attachments/assets/e3ab055e-4c82-459d-880d-c207f70e8bc0" />
+<img width="1087" height="742" alt="image" src="https://github.com/user-attachments/assets/4cb62408-88ed-4a9f-b26b-8e880b897655" />
+<img width="692" height="918" alt="image" src="https://github.com/user-attachments/assets/71ffe49d-2aee-49bb-881c-722478546557" />
+
+
