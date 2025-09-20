@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.employee.model.Employee;
 
@@ -33,7 +35,7 @@ public class EmployeeManager {
 				e.printStackTrace();
 			}
         }
-        System.out.println("\rDone!     ");
+        System.out.println();
 	}
 
 	public static void showOfficeAnimation() {
@@ -102,25 +104,6 @@ public class EmployeeManager {
 		return searchchoice;
 	}
 
-	public static String showOperatorMenuAndAcceptUserInput() {
-
-		System.out.println("\n\n***********OPERATOR****************");
-		System.out.println("Enter your operator");
-		System.out.println("------------------------------------------");
-		System.out.println("Enter for Equals");
-		System.out.println("Enter > for GreaterThan");
-		System.out.println("Enter < for Lesser Than");
-		System.out.println("Enter > for Greater ThanAndEqualTo");
-		System.out.println("Enter <= for Lesser ThanAndEqualTo");
-		System.out.println("Enter ! for NotEqualTo");
-		System.out.println("----------------------------------------");
-		System.out.println("Enter your choice: ");
-		String choice = sc.nextLine();
-
-		return choice;
-
-	}
-
 	public static boolean acceptEmpDetails(Employee emp) {
 		int prevEmpListSize = empList.size();
 		empId++;
@@ -149,16 +132,45 @@ public class EmployeeManager {
 
 	    return removed;
 	}
+	
+	private static List<Employee> filterEmployees(Predicate<Employee> predicate) {
+	    List<Employee> matched = empList.stream()
+	                                    .filter(predicate)
+	                                    .collect(Collectors.toList());
+	    if (matched.isEmpty()) {
+	        System.out.println(RED + "No Match Found!" + ANSI_RESET);
+	    }
+	    return matched;
+	}
 
 
-	public static void invokeSearchSwitchCase(int searchParam) {
+	public static List<Employee> searchEmpByName(String name) {
+	    return filterEmployees(e -> name.equalsIgnoreCase(e.getName()));
+	}
+	
+	public static List<Employee> searchEmpById(int id) {
+	    return filterEmployees(e -> e.getId() == id);
+	}
+	
+	public static List<Employee> searchEmpByDept(String dept) {
+	    return filterEmployees(e -> dept.equalsIgnoreCase(e.getDepartment()));
+	}
+	
+	public static List<Employee> searchEmpBySalary(int salary) {
+	    return filterEmployees(e -> e.getSalary() == salary);
+	}
+	
+
+	public static List<Employee> invokeSearchSwitchCase(int searchParam) {
+		List<Employee> matchedEntries = null;
 		switch (searchParam) {
 		case 1:
 			System.out.println("You entered 1 to search by NAME");
 			System.out.println("Enter the name of employee: ");
 			String nameToBeSearched = sc.nextLine();
 			showLoading();
-			empList.stream().filter(e -> nameToBeSearched.equalsIgnoreCase(e.getName())).forEach(System.out::println);
+			matchedEntries = searchEmpByName(nameToBeSearched);
+			matchedEntries.forEach(System.out::println);
 			break;
 
 		case 2:
@@ -166,7 +178,8 @@ public class EmployeeManager {
 			System.out.println("Enter the ID of employee: ");
 			int idToBeSearched = sc.nextInt();
 			showLoading();
-			empList.stream().filter(e -> idToBeSearched == e.getId()).forEach(System.out::println);
+			matchedEntries = searchEmpById(idToBeSearched);
+			matchedEntries.forEach(System.out::println);
 			break;
 
 		case 3:
@@ -174,8 +187,8 @@ public class EmployeeManager {
 			System.out.println("Enter the DEPT of employee: ");
 			String deptToBeSearched = sc.nextLine();
 			showLoading();
-			empList.stream().filter(e -> deptToBeSearched.equalsIgnoreCase(e.getDepartment()))
-					.forEach(System.out::println);
+			matchedEntries = searchEmpByDept(deptToBeSearched);
+			matchedEntries.forEach(System.out::println);
 			break;
 
 		case 4:
@@ -183,11 +196,12 @@ public class EmployeeManager {
 			System.out.println("Enter the SALARY of employee: ");
 			int salaryToBeSearched = sc.nextInt();
 			showLoading();
-			empList.stream().filter(e -> salaryToBeSearched == e.getSalary()).forEach(System.out::println);
+			matchedEntries = searchEmpBySalary(salaryToBeSearched);
+			matchedEntries.forEach(System.out::println);
 			break;
 
 		}
-
+		return matchedEntries;
 	}
 
 	public static void main(String[] args) {
