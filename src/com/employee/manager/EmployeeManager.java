@@ -9,8 +9,8 @@ import com.employee.model.Employee;
 
 public class EmployeeManager {
 
-	static List<Employee> empList = new ArrayList<>();
-	static int empId = 0;
+	public static List<Employee> empList = new ArrayList<>();
+	public static int empId = 0;
 	static Scanner sc = new Scanner(System.in);
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static final String RED = "\u001B[31m";
@@ -121,26 +121,35 @@ public class EmployeeManager {
 
 	}
 
-	public static void acceptEmpDetails() {
-		System.out.println("Enter the name of Employee: ");
-		String name = sc.nextLine();
-
-		System.out.println("Enter the dept of Employee: ");
-		String dept = sc.nextLine();
-
-		System.out.println("Enter the salary of Employee: ");
-		int salary = sc.nextInt();
-
-		System.out.println("Enter the joiningDate of Employee: ");
-		LocalDate joiningDate = LocalDate.now();
-
-		empId = empList.isEmpty() ? 1 : empList.size() + 1;
-		Employee emp = new Employee(empId, name, dept, salary, joiningDate);
+	public static boolean acceptEmpDetails(Employee emp) {
+		int prevEmpListSize = empList.size();
+		empId++;
 		empList.add(emp);
-		
-		System.out.print(GREEN+"✔ Employee Added Successfully!"+ANSI_RESET);
-
+		if(empList.size() - 1 == prevEmpListSize) {
+			System.out.print(GREEN+"✔ Employee Added Successfully!"+ANSI_RESET);
+			return true;
+		}else {
+			return false;
+		}
 	}
+	
+	public static boolean removeEmpFromList(int empId) {
+	    if (empList.isEmpty()) {
+	        System.out.println("There are no employees to remove! " + RED + "Add employees first." + ANSI_RESET);
+	        return false;
+	    }
+
+	    boolean removed = empList.removeIf(emp -> emp.getId() == empId);
+
+	    if (removed) {
+	        System.out.println(RED + "Employee removed successfully!" + ANSI_RESET);
+	    } else {
+	        System.out.println("Employee with ID " + empId + " not found.");
+	    }
+
+	    return removed;
+	}
+
 
 	public static void invokeSearchSwitchCase(int searchParam) {
 		switch (searchParam) {
@@ -191,7 +200,19 @@ public class EmployeeManager {
 		switch(ch) {
 		case 1:
 			System.out.println("You have entered option 1. Let's add employee details!");
-			acceptEmpDetails();
+			System.out.println("Enter the name of Employee: ");
+			String name = sc.nextLine();
+
+			System.out.println("Enter the dept of Employee: ");
+			String dept = sc.nextLine();
+
+			System.out.println("Enter the salary of Employee: ");
+			int salary = sc.nextInt();
+
+			System.out.println("Enter the joiningDate of Employee: ");
+			LocalDate joiningDate = LocalDate.now();
+			Employee emp = new Employee(empId, name, dept, salary, joiningDate);
+			acceptEmpDetails(emp);
 			ch=showMenuAndAcceptUserInput();
 			break;
 
@@ -203,7 +224,7 @@ public class EmployeeManager {
 			}
 			System.out.println("You have entered option 2. Let's list all employees!");
 			System.out.println("| ID | NAME            | SALARY | JOINING DATE|");
-			empList.forEach(emp-> System.out.println("| " +emp.getId()+" | "+emp.getName()+" | "+emp.getSalary()+" | " +emp.getJoiningDate()+" |"));
+			empList.forEach(e-> System.out.println("| " +e.getId()+" | "+e.getName()+" | "+e.getSalary()+" | " +e.getJoiningDate()+" |"));
 			ch=showMenuAndAcceptUserInput();
 		break;
 
@@ -215,18 +236,20 @@ public class EmployeeManager {
 		break;
 
 		case 4:
-			System.out.println("You have entered option 4. Let's remove an employee");
-			if(empList.isEmpty()) {
-				System.out.println("There are no employees to remove! "+RED+"Add employees first."+ANSI_RESET);
-				ch=showMenuAndAcceptUserInput();
-				break;
-			}
-			System.out.println("Enter ID of employee you want to remove: ");
-			int removeEmpId = sc.nextInt();
-			empList.remove(removeEmpId-1);
-			System.out.println(RED+"Employee removed successfully!"+ANSI_RESET);
-			ch=showMenuAndAcceptUserInput();
-		break;
+		    System.out.println("You have entered option 4. Let's remove an employee");
+		    
+		    if (empList.isEmpty()) {
+		        System.out.println("There are no employees to remove! " + RED + "Add employees first." + ANSI_RESET);
+		    } else {
+		        System.out.println("Enter ID of employee you want to remove: ");
+		        int removeEmpId = sc.nextInt();
+		        EmployeeManager.removeEmpFromList(removeEmpId);
+		    }
+
+		    ch = showMenuAndAcceptUserInput();
+		    break;
+
+
 
 		case 0:
 			runFlag = false;
